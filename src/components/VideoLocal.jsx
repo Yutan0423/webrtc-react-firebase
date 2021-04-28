@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
+import Video from './Video';
+
 const VideoLocal = () => {
     const videoRef = useRef(null);
     const currentVideoRef = videoRef.current;
@@ -23,7 +25,7 @@ const VideoLocal = () => {
         getMedia();
     }, [currentVideoRef]);
 
-    return <></>;
+    return <Video />;
 };
 
 export default VideoLocal;
