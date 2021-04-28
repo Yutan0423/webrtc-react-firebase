@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn({ localPeerName, setLocalPeerName }) {
+export default function SignIn({ remotePeerName, localPeerName, setLocalPeerName }) {
   const label = 'あなたの名前';
   const classes = useStyles();
   const [disabled, setDisabled] = useState(false);
@@ -52,9 +52,7 @@ export default function SignIn({ localPeerName, setLocalPeerName }) {
     const disabled = name === '';
     console.log(disabled);
     setDisabled(disabled);
-  }, [name])
-
-  console.log(name);
+  }, [name]);
 
   const initializeLocalPeer = useCallback((e) => {
     console.log('initializeLocalPeer');
@@ -80,7 +78,7 @@ export default function SignIn({ localPeerName, setLocalPeerName }) {
             margin="normal"
             name="name"
             onChange={(e) => setName(e.target.value)}
-            onCompositionEnd={() => setIsComposed(true)}
+            onCompositionEnd={() => setIsComposed(false)}
             onCompositionStart={() => setIsComposed(true)}
             onKeyDown={(e) => {
               if(isComposed) return;

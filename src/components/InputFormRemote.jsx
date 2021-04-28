@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React,{ useCallback, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -41,9 +41,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn({ remotePeerName, setRemotePeerName }) {
+export default function SignIn({ localPeerName, remotePeerName, setRemotePeerName }) {
   const label = '相手の名前';
   const classes = useStyles();
+  const [disabled, setDisabled] = useState(false);
+  const [name, setName] = useState('');
+  const [isComposed, setIsComposed] = useState(false);
+
+  useEffect(() => {
+    const disabled = name === '';
+    console.log(disabled);
+    setDisabled(disabled);
+  }, [name]);
+
+  const initializeRemotePeer = useCallback((e) => {
+    console.log('initializeLocalPeer');
+    setRemotePeerName(name);
+    e.preventDefault();
+    console.log(remotePeerName);
+  }, [name, setRemotePeerName]);
+
+  if(localPeerName === '') return <></>;
+  if(remotePeerName !== '') return <></>;
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,13 +78,24 @@ export default function SignIn({ remotePeerName, setRemotePeerName }) {
             label={label}
             margin="normal"
             name="name"
+            onChange={(e) => setName(e.target.value)}
+            onCompositionEnd={() => setIsComposed(false)}
+            onCompositionStart={() => setIsComposed(true)}
+            onKeyDown={(e) => {
+              if(isComposed) return;
+              if(e.target.value === '') return;
+              if(e.key === 'Enter') initializeRemotePeer(e);
+            }}
             required
+            value={name}
             variant="outlined"
           />
           <Button
             className={classes.submit}
             color="primary"
+            disabled={disabled}
             fullWidth
+            onClick={(e) => initializeRemotePeer(e)}
             type="submit"
             variant="contained"
           >
