@@ -58,7 +58,6 @@ export default function SignIn({ remotePeerName, localPeerName, setLocalPeerName
     console.log('initializeLocalPeer');
     setLocalPeerName(name);
     e.preventDefault();
-    console.log(localPeerName);
   }, [name, setLocalPeerName]);
 
   if(localPeerName !== '') return <></>;
