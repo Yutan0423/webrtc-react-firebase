@@ -1,25 +1,17 @@
-import React, { useReducer, useState } from 'react';
-import InputFormLocal from './InputFormLocal';
-import InputFormRemote from './InputFormRemote';
-import RtcClient from '../utils/RtcClient';
+import React from 'react';
+import InputForms from './InputForms';
 import VideoArea from './VideoArea';
+import useRtcClient from '../components/hooks/useRtcClient';
 
 const App = () => {
-  const [rtcClient, _setRtcClient] = useState(new RtcClient());
-  const [, forceRender] = useReducer((boolean) => !boolean, false);
+  const rtcClient = useRtcClient();
 
-  // setRtcClientは変化するが、再レンダリングはしないため、このような関数を定義する。
-  const setRtcClient = (rtcClient) => {
-    _setRtcClient(rtcClient);
-    forceRender();
-  }
 
   return (
-    <>
-      <InputFormLocal rtcClient={rtcClient}  setRtcClient={setRtcClient} />
-      <InputFormRemote rtcClient={rtcClient} setRtcClient={setRtcClient} />
-      <VideoArea rtcClient={rtcClient} />
-    </>
+  <>
+    <InputForms rtcClient={rtcClient} />
+    <VideoArea rtcClient={rtcClient} />
+  </>
   );
 }
 
