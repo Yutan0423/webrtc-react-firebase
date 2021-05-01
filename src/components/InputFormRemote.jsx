@@ -56,7 +56,7 @@ export default function SignIn({ rtcClient }) {
 
   const initializeRemotePeer = useCallback((e) => {
     rtcClient.remotePeerName = name;
-    rtcClient.setRtcClient(rtcClient);
+    rtcClient.setRtcClient();
     e.preventDefault();
   }, [name, rtcClient]);
 
