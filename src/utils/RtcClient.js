@@ -16,6 +16,7 @@ export default class RtcClient {
     setRtcClient() {
         this._setRtcClient(this);
     }
+
     async getUserMedia() {
         try {
             const constraints = { audio: true, video: true };
@@ -24,6 +25,33 @@ export default class RtcClient {
             console.error(error);
         }
 
+    }
+
+    async setMediaStream () {
+        await this.getUserMedia();
+        this.addTracks();
+        this.setRtcClient();
+    }
+
+    addTracks() {
+        this.addAudioTrack();
+        this.addVideoTrack();
+    }
+
+    addAudioTrack() {
+        this.rtcPeerConnection.addTrack(this.audioTrack, this.mediaStream);
+    }
+
+    addVideoTrack() {
+        this.rtcPeerConnection.addTrack(this.videoTrack, this.mediaStream);
+    }
+
+    get audioTrack() {
+        return this.mediaStream.getAudioTracks()[0];
+    }
+
+    get VideoTrack() {
+        return this.mediaStream.getVideoTracks()[0];
     }
 
     startListening(localPeerName) {
