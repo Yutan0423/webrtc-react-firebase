@@ -24,7 +24,7 @@ const Video = ({ isLocal, name, videoRef }) => {
       <CardActionArea>
         <video
           autoPlay
-          muted={isLocal}
+          muted={isLocal || muted}
           ref={videoRef}
           width={dimensionCard.width}
         />
