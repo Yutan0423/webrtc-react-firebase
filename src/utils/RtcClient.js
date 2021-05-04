@@ -147,11 +147,20 @@ export default class RtcClient {
         return this.rtcPeerConnection.localDescription.toJSON();
     }
 
+    async addIceCandidate(candidate) {
+        try {
+            const iceCandidate = new RTCIceCandidate(candidate);
+            await this.rtcPeerConnection.addIceCandidate(iceCandidate);
+        } catch(error) {
+            console.error(error);
+        }
+    }
+
     setOnicecandidateCallback() {
-        this.rtcPeerConnection.onicecandidate = ({ candidate }) => {
+        this.rtcPeerConnection.onicecandidate = async ({ candidate }) => {
             if(candidate) {
                 console.log({ candidate })
-                // TODO: remoteへcandidateを通知する
+                await this.firebaseSignallingClient.sendCandidate(candidate.toJSON());
             }
         }
     }
@@ -159,13 +168,15 @@ export default class RtcClient {
     async startListening(localPeerName) {
         this.localPeerName = localPeerName;
         this.setRtcClient();
+        console.log(localPeerName);
         await this.firebaseSignallingClient.remove(localPeerName);
         this.firebaseSignallingClient.database
             .ref(localPeerName)
             .on('value', async (snapshot) => {
                 const data = snapshot.val();
+                console.log({ data });
                 if(data === null) return;
-                const { sender, sessionDescription, type } = data;
+                const { candidate, sender, sessionDescription, type } = data;
                 switch(type) {
                     case 'offer':
                         await this.answer(sender, sessionDescription);
@@ -173,7 +184,11 @@ export default class RtcClient {
                     case 'answer':
                         await this.saveReceivedSessionDescription(sessionDescription);
                         break;
+                    case 'candidate':
+                        this.addIceCandidate(candidate);
+                        break;
                     default:
+                        this.setRtcClient();
                         break;
 
                 }
