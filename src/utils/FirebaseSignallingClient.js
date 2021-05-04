@@ -24,7 +24,7 @@ export default class FirebaaseSinallingClient {
     }
 
     get targetRef() {
-        return this.database.ref(this,remotePeerName);
+        return this.database.ref(this.remotePeerName);
     }
 
     async sendOffer(sessionDescription) {
