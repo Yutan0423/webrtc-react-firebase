@@ -1,7 +1,7 @@
 import FirebaseSinallingClient from './FirebaseSignallingClient';
 
 export default class RtcClient {
-    constructor(setRtcClient) {
+    constructor(remoteVideoRef, setRtcClient) {
         const config = {
             iceServers: [{url: "stun:stun.stunprotocol.org"}]
         };
@@ -9,6 +9,7 @@ export default class RtcClient {
         this.FirebaseSinallingClient = new FirebaseSinallingClient();
         this.localPeerName = '';
         this.remotePeerName = '';
+        this.remoteVideoRef = remoteVideoRef;
         this._setRtcClient = setRtcClient;
         this.mediaStream = null;
     }
