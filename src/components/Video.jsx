@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Card,
@@ -8,10 +8,12 @@ import {
   Typography
 } from '@material-ui/core';
 import useDimensions from './hooks/useDimensions';
+import VolumeButton from './VolumeButton';
 
 const useStyles = makeStyles({});
 
 const Video = ({ isLocal, name, videoRef }) => {
+  const [muted, setMuted] = useState(true);
   const refCard = useRef(null);
   const dimensionCard = useDimensions(refCard);
 
@@ -33,6 +35,7 @@ const Video = ({ isLocal, name, videoRef }) => {
         </CardContent>
       </CardActionArea>
       <CardActions>
+        <VolumeButton muted={muted} setMuted={setMuted} />
       </CardActions>
     </Card>
   );
