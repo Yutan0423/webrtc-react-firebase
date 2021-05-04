@@ -1,4 +1,4 @@
-import FirebaseSinallingClient from './FirebaseSignallingClient';
+import FirebaseSignallingClient from './FirebaseSignallingClient';
 
 export default class RtcClient {
     constructor(remoteVideoRef, setRtcClient) {
@@ -6,7 +6,7 @@ export default class RtcClient {
             iceServers: [{url: "stun:stun.stunprotocol.org"}]
         };
         this.rtcPeerConnection = new RTCPeerConnection(config);
-        this.FirebaseSinallingClient = new FirebaseSinallingClient();
+        this.firebaseSignallingClient = new FirebaseSignallingClient();
         this.localPeerName = '';
         this.remotePeerName = '';
         this.remoteVideoRef = remoteVideoRef;
@@ -78,12 +78,12 @@ export default class RtcClient {
     }
 
     async sendOffer() {
-        this.FirebaseSinallingClient.setPeerNames(
+        this.firebaseSignallingClient.setPeerNames(
             this.localPeerName,
             this.remotePeerName
         );
 
-        await this.FirebaseSinallingClient.sendOffer(this.localDescription);
+        await this.firebaseSignallingClient.sendOffer(this.localDescription);
     }
 
     setOnTrack() {
@@ -98,12 +98,40 @@ export default class RtcClient {
         this.setRtcClient();
     }
 
+    async answer(sender, sessionDescription) {
+        try {
+            this.remotePeerName = sender;
+            this.setOnicecandidateCallback();
+            this.setOnTrack();
+            await this.setRemoteDescription(sessionDescription);
+            const answer = await this.rtcPeerConnection.createAnswer();
+            await this.rtcPeerConnection.setLocalDescription(answer);
+            await this.sendAnswer();
+        } catch(error) {
+            console.error(error);
+        }
+
+    }
+
     async connect(remotePeerName) {
         this.remotePeerName = remotePeerName;
         this.setOnicecandidateCallback();
         this.setOnTrack();
         await this.offer();
         this.setRtcClient();
+    }
+
+    async setRemoteDescription(sessionDescription) {
+        await this.rtcPeerConnection.setRemoteDescription(sessionDescription);
+    }
+
+    async sendAnswer() {
+        this.firebaseSignallingClient.setPeerNames(
+            this.localPeerName,
+            this.remotePeerName
+        );
+
+        await this.firebaseSignallingClient.sendAnswer(this.localDescription);
     }
 
     get localDescription() {
@@ -122,10 +150,21 @@ export default class RtcClient {
     startListening(localPeerName) {
         this.localPeerName = localPeerName;
         this.setRtcClient();
-        this.FirebaseSinallingClient.database
+        this.firebaseSignallingClient.database
             .ref(localPeerName)
-            .on('value', (snapshot) => {
+            .on('value', async (snapshot) => {
                 const data = snapshot.val();
+                if(data === null) return;
+                const { sender, sessionDescription, type } = data;
+                switch(type) {
+                    case 'offer':
+                        // TODO: answerを実行する
+                        await this.answer(sender, sessionDescription);
+                        break;
+                    default:
+                        break;
+
+                }
             });
     }
 

@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 
-export default class FirebaaseSinallingClient {
+export default class FirebaseSignallingClient {
     constructor() {
         const firebaseConfig = {
             apiKey: "AIzaSyBYVKIqG8590PYUv4OLHKlETKQ8XaKFfnk",
@@ -30,6 +30,14 @@ export default class FirebaaseSinallingClient {
     async sendOffer(sessionDescription) {
         await this.targetRef.set({
             type: 'offer',
+            sender: this.localPeerName,
+            sessionDescription
+        });
+    }
+
+    async sendAnswer(sessionDescription) {
+        await this.targetRef.set({
+            type: 'answer',
             sender: this.localPeerName,
             sessionDescription
         });
