@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   Card,
   CardActionArea,
@@ -12,16 +11,15 @@ import VolumeButton from './VolumeButton';
 import AudioAnalyser from './AudioAnalyser';
 import AudioVisualiser from './AudioVisualiser';
 
-const useStyles = makeStyles({});
-
 const Video = ({ isLocal, name, rtcClient, videoRef }) => {
   const [muted, setMuted] = useState(rtcClient.initialAudioMuted);
   const refCard = useRef(null);
   const dimensionCard = useDimensions(refCard);
+  const refVolumeButton = useRef(null);
+  const dimensionsVolumeButton = useDimensions(refVolumeButton);
 
   if(videoRef.current) console.log({isLocal, srcObject: videoRef.current.srcObject});
 
-  const classes = useStyles();
 
   return (
     <Card ref={refCard}>
@@ -29,6 +27,7 @@ const Video = ({ isLocal, name, rtcClient, videoRef }) => {
         <video
           autoPlay
           muted={isLocal || muted}
+          refVolumeButton={refVolumeButton}
           ref={videoRef}
           width={dimensionCard.width}
         />
@@ -42,11 +41,15 @@ const Video = ({ isLocal, name, rtcClient, videoRef }) => {
         <VolumeButton
           isLocal={isLocal}
           muted={muted}
+          refVolumeButton={refVolumeButton}
           rtcClient={rtcClient}
           setMuted={setMuted}
         />
         { !muted && videoRef.current && videoRef.current.srcObject && (
-          <AudioAnalyser audio={videoRef.current.srcObject} />
+          <AudioAnalyser
+            audio={videoRef.current.srcObject}
+            width={dimensionCard.width - dimensionsVolumeButton.width -40}
+          />
         )}
       </CardActions>
     </Card>
