@@ -12,8 +12,8 @@ import VolumeButton from './VolumeButton';
 
 const useStyles = makeStyles({});
 
-const Video = ({ isLocal, name, videoRef }) => {
-  const [muted, setMuted] = useState(true);
+const Video = ({ isLocal, name, rtcClient, videoRef }) => {
+  const [muted, setMuted] = useState(rtcClient.initialAudioMuted);
   const refCard = useRef(null);
   const dimensionCard = useDimensions(refCard);
 
@@ -35,7 +35,12 @@ const Video = ({ isLocal, name, videoRef }) => {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <VolumeButton muted={muted} setMuted={setMuted} />
+        <VolumeButton
+          isLocal={isLocal}
+          muted={muted}
+          rtcClient={rtcClient}
+          setMuted={setMuted}
+        />
       </CardActions>
     </Card>
   );
