@@ -21,6 +21,8 @@ const VideoLocal = ({ rtcClient }) => {
         getMedia();
     }, [currentVideoRef, mediaStream]);
 
+    console.log({ rtcClient })
+
     return (
         <Video
             isLocal={true}

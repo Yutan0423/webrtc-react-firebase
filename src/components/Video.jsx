@@ -9,7 +9,6 @@ import {
 import useDimensions from './hooks/useDimensions';
 import VolumeButton from './VolumeButton';
 import AudioAnalyser from './AudioAnalyser';
-import AudioVisualiser from './AudioVisualiser';
 
 const Video = ({ isLocal, name, rtcClient, videoRef }) => {
   const [muted, setMuted] = useState(rtcClient.initialAudioMuted);
@@ -17,9 +16,6 @@ const Video = ({ isLocal, name, rtcClient, videoRef }) => {
   const dimensionCard = useDimensions(refCard);
   const refVolumeButton = useRef(null);
   const dimensionsVolumeButton = useDimensions(refVolumeButton);
-
-  if(videoRef.current) console.log({isLocal, srcObject: videoRef.current.srcObject});
-
 
   return (
     <Card ref={refCard}>
